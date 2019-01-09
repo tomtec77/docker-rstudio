@@ -34,7 +34,8 @@ RUN apt-get update && \
 RUN useradd rstudio && \
     mkdir -p $RUSER_HOME/R && \
     chown -R rstudio:rstudio $RUSER_HOME && \
-    addgroup rstudio staff
+    addgroup rstudio staff && \
+    echo 'rstudio:rstudio' | chpasswd
 
 # Configure default locale
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
@@ -44,11 +45,11 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 # Install RStudio Server
-#RUN wget --progress=bar:force https://download2.rstudio.org/$RSTUDIO_DEB
-#RUN gdebi -n $RSTUDIO_DEB && \
-#    echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
+RUN wget --progress=bar:force https://download2.rstudio.org/$RSTUDIO_DEB
+RUN gdebi -n $RSTUDIO_DEB && \
+    echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
 
-#EXPOSE 8787
-#ENTRYPOINT ["/usr/lib/rstudio-server/bin/rserver"]
-#CMD ["--server-daemonize=0", "--server-app-armor-enabled=0"]
-CMD ["bash"]
+EXPOSE 8787
+ENTRYPOINT ["/usr/lib/rstudio-server/bin/rserver"]
+CMD ["--server-daemonize=0", "--server-app-armor-enabled=0"]
+
