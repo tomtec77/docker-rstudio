@@ -1,7 +1,8 @@
 FROM ubuntu:bionic
 
 ARG DEBIAN_FRONTEND=noninteractive
-ENV RSTUDIO_DEB rstudio-server-1.1.463-amd64.deb
+
+ENV RSTUDIO_DEB rstudio-server-1.2.1578-amd64.deb
 ENV CRAN_URL https://cloud.r-project.org
 ENV CRAN_REPO deb $CRAN_URL/bin/linux/ubuntu bionic-cran35/
 ENV RUSER_HOME /home/rstudio
@@ -11,13 +12,24 @@ ENV RUSER_HOME /home/rstudio
 # (hash sum mismatches when downloading packages)
 COPY ./badproxy /etc/apt/apt.conf.d/99fixbadproxy
 RUN apt-get update && \
-    apt-get -y dist-upgrade && \
-    apt-get install -y --no-install-recommends --no-install-suggests \
-      apt-utils gdebi-core lsb-release sudo libapparmor1 psmisc locales \
-      software-properties-common apt-transport-https gnupg wget && \
-    apt-get -y autoremove && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+#    apt-get -y dist-upgrade && \
+	apt-get install -y --no-install-recommends --no-install-suggests \
+	apt-utils \
+	gdebi-core \
+	lsb-release \
+	sudo \
+	libapparmor1 \
+	psmisc \
+	locales \
+	software-properties-common \
+	apt-transport-https \
+	gnupg \
+	wget
+
+# Clean up
+RUN apt-get -y autoremove && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/*
 
 # Install R
 COPY ./cran-r-key-ubuntu.txt /etc/apt/trusted.gpg.d/cran-r-key.asc
@@ -31,11 +43,16 @@ RUN apt-get update && \
 # /usr/local/lib/R/site.library
 # User should also have and own a home directory for rstudio or linked
 # volumes to work properly
-RUN useradd rstudio && \
+RUN useradd -d $RUSER_HOME -s /bin/bash -u 10000 -U -p rstudio rstudio && \
     mkdir -p $RUSER_HOME/R && \
-    chown -R rstudio:rstudio $RUSER_HOME && \
     addgroup rstudio staff && \
     echo 'rstudio:rstudio' | chpasswd
+
+RUN chown -R rstudio:rstudio $RUSER_HOME
+
+# Create a shared directory
+RUN mkdir /share && \
+	chown -R rstudio:rstudio /share
 
 # Configure default locale
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
@@ -50,6 +67,8 @@ RUN gdebi -n $RSTUDIO_DEB && \
     echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
 
 EXPOSE 8787
-ENTRYPOINT ["/usr/lib/rstudio-server/bin/rserver"]
-CMD ["--server-daemonize=0", "--server-app-armor-enabled=0"]
+VOLUME /share
 
+ENTRYPOINT ["/usr/lib/rstudio-server/bin/rserver"]
+
+CMD ["--server-daemonize=0", "--server-app-armor-enabled=0"]
