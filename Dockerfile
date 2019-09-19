@@ -2,9 +2,6 @@ FROM ubuntu:bionic
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV RSTUDIO_DEB rstudio-server-1.2.1578-amd64.deb
-ENV CRAN_URL https://cloud.r-project.org
-ENV CRAN_REPO deb $CRAN_URL/bin/linux/ubuntu bionic-cran35/
 ENV RUSER_HOME /home/rstudio
 
 # Update the system and install dependencies
@@ -16,6 +13,7 @@ RUN apt-get update && \
 	apt-get install -y --no-install-recommends --no-install-suggests \
 	apt-utils \
 	gdebi-core \
+	git \
 	lsb-release \
 	sudo \
 	libapparmor1 \
@@ -32,7 +30,11 @@ RUN apt-get -y autoremove && \
 	rm -rf /var/lib/apt/lists/*
 
 # Install R
+ENV CRAN_URL https://cloud.r-project.org
+ENV CRAN_REPO deb $CRAN_URL/bin/linux/ubuntu bionic-cran35/
+
 COPY ./cran-r-key-ubuntu.txt /etc/apt/trusted.gpg.d/cran-r-key.asc
+
 RUN add-apt-repository "$CRAN_REPO"
 RUN apt-get update && \
     apt-get install -y r-base && \
@@ -62,7 +64,10 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
 # Install RStudio Server
-RUN wget --progress=bar:force https://download2.rstudio.org/$RSTUDIO_DEB
+ENV RSTUDIO_URL https://download2.rstudio.org/server/bionic/amd64
+ENV RSTUDIO_DEB rstudio-server-1.2.5001-amd64.deb
+
+RUN wget --progress=bar:force $RSTUDIO_URL/$RSTUDIO_DEB
 RUN gdebi -n $RSTUDIO_DEB && \
     echo "r-cran-repos=${CRAN_URL}" >> /etc/rstudio/rsession.conf
 
