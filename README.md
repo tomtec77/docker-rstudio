@@ -2,11 +2,17 @@
 
 Docker image to run R and RStudio Server.
 
-The Dockerfile pulls an Ubuntu 18.04 container and installs R, RStudio Server and
-several dependencies.
+The Dockerfile pulls an Ubuntu 18.04 image and installs R, RStudio Server and
+several dependencies on it. It also creates a regular, non-sudo user for the
+server, named`rstudio`.
 
-RStudio Server runs on port 8787 of the container, so you need to map it to a 
-port in the host.
+RStudio Server runs on port 8787 of the container.
+
+Build the image with:
+
+``` bash
+sudo docker build . -t tomtec/rserver
+```
 
 ## Shared directory
 
@@ -20,13 +26,13 @@ numeric user and group IDs to match those of the user in the container (which is
 sudo chown -R 10000:10000 /your/shared/directory
 ```
 
+## Running a container
+
 To run the server:
 
 ``` bash
-docker run -p 8787:8787 -v /your/shared/directory:/share tomtec/rstudioserver
+sudo docker run -p 8787:8787 -v /your/shared/directory:/share tomtec/rserver
 ```
 
 Point a browser to http://localhost:8787 and log in to RStudio with username and
 password `rstudio`.
-
-
