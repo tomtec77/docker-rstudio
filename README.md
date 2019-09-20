@@ -36,3 +36,10 @@ sudo docker run -p 8787:8787 -v /your/shared/directory:/share tomtec/rserver
 
 Point a browser to http://localhost:8787 and log in to RStudio with username and
 password `rstudio`.
+
+Once you're done, to stop the container first find out its ID with 
+`sudo docker ps` and then run
+
+``` bash
+sudo docker stop <container ID>
+```

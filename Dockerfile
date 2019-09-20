@@ -22,6 +22,9 @@ RUN apt-get update && \
 	software-properties-common \
 	apt-transport-https \
 	gnupg \
+	libcurl4-openssl-dev \
+	libxml2-dev \
+	libssl-dev \
 	wget
 
 # Clean up
@@ -39,6 +42,16 @@ RUN add-apt-repository "$CRAN_REPO"
 RUN apt-get update && \
     apt-get install -y r-base && \
     apt-get clean
+
+# Install some R packages
+# Generally useful
+RUN R -e "install.packages('tidyverse', dependencies=TRUE, repos='$CRAN_REPO')"
+# For package management
+RUN R -e "install.packages('packrat', dependencies=TRUE, repos='$CRAN_REPO')"
+# For notebooks or presentations
+RUN R -e "install.packages(c('digest'), dependencies=TRUE, repos='$CRAN_REPO')"
+# For Shiny
+RUN R -e "install.packages('shiny', dependencies=TRUE, repos='$CRAN_REPO')"
 
 # Create a default user. Available via runtime flag '--user rstudio'
 # Add user to 'staff' group, granting them write privileges to
