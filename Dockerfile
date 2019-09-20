@@ -45,13 +45,13 @@ RUN apt-get update && \
 
 # Install some R packages
 # Generally useful
-RUN R -e "install.packages('tidyverse', dependencies=TRUE, repos='$CRAN_REPO')"
+RUN R -e "install.packages('tidyverse', dependencies=TRUE, repos='$CRAN_URL')"
 # For package management
-RUN R -e "install.packages('packrat', dependencies=TRUE, repos='$CRAN_REPO')"
+RUN R -e "install.packages('packrat', dependencies=TRUE, repos='$CRAN_URL')"
 # For notebooks or presentations
-RUN R -e "install.packages(c('digest'), dependencies=TRUE, repos='$CRAN_REPO')"
+RUN R -e "install.packages('digest', dependencies=TRUE, repos='$CRAN_URL')"
 # For Shiny
-RUN R -e "install.packages('shiny', dependencies=TRUE, repos='$CRAN_REPO')"
+RUN R -e "install.packages('shiny', dependencies=TRUE, repos='$CRAN_URL')"
 
 # Create a default user. Available via runtime flag '--user rstudio'
 # Add user to 'staff' group, granting them write privileges to
@@ -87,6 +87,7 @@ RUN gdebi -n $RSTUDIO_DEB && \
 EXPOSE 8787
 VOLUME /share
 
-ENTRYPOINT ["/usr/lib/rstudio-server/bin/rserver"]
+#ENTRYPOINT ["/usr/lib/rstudio-server/bin/rserver"]
 
+#CMD ["/bin/bash"]
 CMD ["--server-daemonize=0", "--server-app-armor-enabled=0"]
