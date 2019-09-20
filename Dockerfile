@@ -87,7 +87,7 @@ RUN gdebi -n $RSTUDIO_DEB && \
 EXPOSE 8787
 VOLUME /share
 
-#ENTRYPOINT ["/usr/lib/rstudio-server/bin/rserver"]
+ENTRYPOINT ["/usr/lib/rstudio-server/bin/rserver"]
 
 #CMD ["/bin/bash"]
 CMD ["--server-daemonize=0", "--server-app-armor-enabled=0"]
