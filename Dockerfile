@@ -43,9 +43,11 @@ RUN apt-get update && apt-get install -y r-base \
 RUN useradd -d $RUSER_HOME -s /bin/bash -u 10000 -U -p $NAME $NAME && \
     mkdir -p $RUSER_HOME/R && \
     addgroup $NAME staff && \
-    echo "${NAME}:rstudio" | chpasswd
+    echo "rstudio:rstudio" | chpasswd
 
 RUN chown -R $NAME:$NAME $RUSER_HOME
+
+#RUN cp /etc/pam.d/login /etc/pam.d/$NAME
 
 # Create a shared directory
 RUN mkdir /share && \

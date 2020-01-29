@@ -31,7 +31,7 @@ sudo chown -R 10000:10000 /your/shared/directory
 To run the server:
 
 ``` bash
-sudo docker run --rm --user rstudio -p 8787:8787 -v /your/shared/directory:/share tomtec/rserver
+sudo docker run --rm -p 8787:8787 -v /your/shared/directory:/share tomtec/rserver
 ```
 
 Point a browser to http://localhost:8787 and log in to RStudio with username and
