@@ -1,0 +1,9 @@
+# Install some R packages
+# Generally useful
+RUN R -e "install.packages('tidyverse', dependencies=TRUE, repos='$CRAN_URL')"
+# For package management
+RUN R -e "install.packages('packrat', dependencies=TRUE, repos='$CRAN_URL')"
+# For notebooks or presentations
+RUN R -e "install.packages('digest', dependencies=TRUE, repos='$CRAN_URL')"
+# For Shiny
+RUN R -e "install.packages('shiny', dependencies=TRUE, repos='$CRAN_URL')"

@@ -44,3 +44,6 @@ you are done working with it, to stop the container first find out its ID with
 ``` bash
 sudo docker stop <container ID>
 ```
+
+If you get 'permission denied' errors when trying to stop the container, see
+here: https://stackoverflow.com/questions/47223280/docker-containers-can-not-be-stopped-or-removed-permission-denied-error
